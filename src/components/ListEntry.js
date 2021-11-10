@@ -1,23 +1,43 @@
 import {connect} from 'react-redux';
-import {useState} from 'react';
-import {updateAnime, editing, deleteAnime} from '../store/actions/userActions'
-import { MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBCol, MDBCardTitle, MDBBtn, MDBIcon} from 'mdb-react-ui-kit';
+import {useState, useEffect} from 'react';
+import {updateAnime, editing, deleteAnime, fetchUserAnime} from '../store/actions/userActions'
+import { MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBCol, MDBCardTitle, MDBBtn, MDBIcon, MDBSpinner} from 'mdb-react-ui-kit';
+import schema from '../validation/postUpdateSchema'
+import {reach} from 'yup'
 
-
-
-function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, deleteAnime}) {
+function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, deleteAnime, fetchUserAnime}) {
     const initialState = {
         user_id: 0,
         anime_id: 0,
         completed: 0,
         rating: user.animes[idx].rating,
     }
-
     const [formValues, setFormValues] = useState(initialState)
+    const [formErrors, setFormErrors] = useState('')
+    const [disabled, setDisabled] = useState(true)
 
+    useEffect(() => {
+        fetchUserAnime(user.animes[idx].anime_id)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
+    useEffect(() => {
+        schema.isValid(formValues).then(valid => setDisabled(!valid))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [formValues])
+
+    // Form fun
     const onChange = (event) => {
         const {name, value} = event.target;
+        validate(name, value)
         setFormValues({...formValues, [name]: value})
+    }
+
+    const validate = (name, value) => {
+        reach(schema, name)
+            .validate(value)
+            .then(() => setFormErrors({...formErrors, [name]: '' }))
+            .catch(err => setFormErrors({...formErrors, [name]: err.errors[0]}))
     }
 
     // Onclicks for buttons
@@ -42,18 +62,25 @@ function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, dele
 
     return(
         <div className='p-3 d-flex justify-content-center'>
-            <MDBCard className='border' style={{ maxWidth: '80%' }} alignment='center'>
+            {userAnimes.length !== user.animes.length ? 
+                <div className='text-center'>
+                    <MDBSpinner role='status'>
+                        <span className='visually-hidden'>Fetching Anime...</span>
+                    </MDBSpinner>
+                </div> 
+                : 
+                <MDBCard className='border' style={{ maxWidth: '80%' }} alignment='center'>
                 <MDBRow className='g0'>
                     <MDBCol md='2'>
-                        <MDBCardImage src={userAnimes[idx].data.image_url} alt='...' fluid />
+                        <MDBCardImage src={userAnimes[idx].image_url} alt='...' fluid />
                     </MDBCol>
                     <MDBCol md='10'>
                     <MDBCardBody>
                         <MDBCardTitle>
-                            {userAnimes[idx].data.title}
+                            {userAnimes[idx].title}
                         </MDBCardTitle>
                         <MDBCardText>
-                            {userAnimes[idx].data.synopsis}
+                            {userAnimes[idx].synopsis}
                         </MDBCardText>
                         {isEditing 
                             ? <form> 
@@ -69,8 +96,7 @@ function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, dele
                                     onChange={onChange} 
                                     value={formValues.rating}
                                 />
-
-                                <MDBBtn className='mx-3' onClick={update}>
+                                <MDBBtn disabled={disabled} className='mx-3' onClick={update}>
                                     Update
                                 </MDBBtn>
                                 <MDBIcon 
@@ -78,6 +104,7 @@ function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, dele
                                     onClick={edit} 
                                     style={{cursor: 'pointer'}}
                                 />
+                                <p className='text-danger'>{formErrors.rating}</p>
                             </form>
                             : <div className='d-inline-flex'>
                                 <h4 className='mx-2'>Completed: {user.animes[idx].completed === 1 ? <>Yes</> : <>No</>}</h4>
@@ -102,7 +129,7 @@ function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, dele
                         </MDBCardBody>
                     </MDBCol>
                 </MDBRow>
-            </MDBCard>
+            </MDBCard>}
         </div>
     )
 }
@@ -111,8 +138,9 @@ const mapStateToProps = (state) => {
     return {
         userAnimes: state.authReducer.userAnimes,
         user: state.authReducer.user,
+        loading: state.authReducer.loading,
         isEditing: state.authReducer.isEditing,
     }
 }
 
-export default connect(mapStateToProps, {updateAnime, editing, deleteAnime})(ListEntry)
+export default connect(mapStateToProps, {fetchUserAnime, updateAnime, editing, deleteAnime})(ListEntry)

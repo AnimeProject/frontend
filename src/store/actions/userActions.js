@@ -12,6 +12,7 @@ export const REGISTER_START = "REGISTER_START";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_ERROR = "REGISTER_ERROR";
 export const RESET_REGISTER = "RESET_REGISTER";
+export const RESET_USER_ANIMES = "RESET_USER_ANIMES";
 
 export const GETTING_USER_START = "GETTING_USER_START";
 export const GETTING_USER_SUCCESS = "GETTING_USER_SUCCESS";
@@ -61,6 +62,9 @@ export const resetMessages = () => {
 export const resetRegister = () => {
     return {type: RESET_REGISTER}
 }
+export const resetUserAnimes = () => {
+    return {type: RESET_USER_ANIMES}
+}
 
 export const handleRegister = (user) => (dispatch) => {
     dispatch({type: REGISTER_START})
@@ -96,17 +100,16 @@ export const fetchUserFriends = (id) => (dispatch) => {
         })
 }
 
-export const fetchUserAnimes = (animes) => (dispatch) => {
-    dispatch({ type: FETCH_USER_ANIME_START })
-    const promises = Promise.all(animes.map((anime) => {
-        return axios.get(`https://api.jikan.moe/v3/anime/${anime.anime_id}`)
-    }))
-    promises.then(res => {
-        dispatch({type: FETCH_USER_ANIME_SUCCESS, payload: res})
-    }).catch(error => {
-        dispatch({type:FETCH_USER_ANIME_ERROR, payload: error})
-    })
-  }
+export const fetchUserAnime = (anime_id) => (dispatch) => {
+    dispatch({type: FETCH_USER_ANIME_START})
+    axios.get(`https://api.jikan.moe/v3/anime/${anime_id}`)
+        .then(res => {
+            dispatch({type: FETCH_USER_ANIME_SUCCESS, payload: res.data})
+        })
+        .catch(err => {
+            dispatch({type: FETCH_USER_ANIME_ERROR, payload: err})
+        })
+}
 
 export const addAnimeToList = (anime) => (dispatch) => {
     axiosWithAuth().post('https://animenu.herokuapp.com/api/lists', anime)
@@ -139,6 +142,6 @@ export const deleteAnime = (id, anime_id) => (dispatch) => {
         .then(res => {
             dispatch({type: DELETE_ANIME_SUCCESS, payload: anime_id})
         }).catch(error => {
-            dispatch({type: DELETE_ANIME_ERROR, action: error.response.data.message})
+            dispatch({type: DELETE_ANIME_ERROR, action: error.message})
         })
 }

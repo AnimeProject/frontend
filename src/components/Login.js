@@ -48,7 +48,6 @@ function Login(props) {
                     <form alignment='center' style={{maxWidth: '100%'}}>
                         <MDBInput 
                             label='Username'
-                            id='form1'
                             type='text'
                             name='username'
                             onChange={changeHandler}
@@ -57,7 +56,6 @@ function Login(props) {
                         <br/>
                         <MDBInput 
                             label='Password'
-                            id='form1'
                             type='password'
                             name='password'
                             onChange={changeHandler}

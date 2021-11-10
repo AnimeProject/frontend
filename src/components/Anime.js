@@ -5,7 +5,7 @@ import { addAnimeToList, resetMessages } from '../store/actions/userActions'
 import {connect} from 'react-redux';
 import { MDBCard, MDBSpinner, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBBtn, MDBCol } from 'mdb-react-ui-kit';
 import {reach} from 'yup'
-import schema from '../validation/postSchema'
+import schema from '../validation/postUpdateSchema'
 
 const initialState = {
     user_id: 0,

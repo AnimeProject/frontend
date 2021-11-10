@@ -1,4 +1,4 @@
-import {LOGIN_SUCCESS, LOGIN_ERROR, LOG_OUT_SUCCESS, REGISTER_ERROR, REGISTER_SUCCESS, GETTING_USER_SUCCESS, GETTING_USER_FAILED, FETCH_USER_ANIME_START, FETCH_USER_ANIME_SUCCESS, FETCH_USER_ANIME_ERROR, POST_ANIME_SUCCESS, POST_ANIME_ERROR, GETTING_USER_FRIENDS_START, GETTING_USER_FRIENDS_SUCCESS, GETTING_USER_FRIENDS_FAILED, PUT_ANIME_SUCCESS, PUT_ANIME_ERROR, EDITING_CHANGE, DELETE_ANIME_SUCCESS, DELETE_ANIME_ERROR, RESET_MESSAGES, RESET_REGISTER, LOGIN_START, REGISTER_START} from '../actions/userActions'
+import {LOGIN_SUCCESS, LOGIN_ERROR, LOG_OUT_SUCCESS, REGISTER_ERROR, REGISTER_SUCCESS, GETTING_USER_SUCCESS, GETTING_USER_FAILED, FETCH_USER_ANIME_START, FETCH_USER_ANIME_SUCCESS, FETCH_USER_ANIME_ERROR, POST_ANIME_SUCCESS, POST_ANIME_ERROR, GETTING_USER_FRIENDS_START, GETTING_USER_FRIENDS_SUCCESS, GETTING_USER_FRIENDS_FAILED, PUT_ANIME_SUCCESS, PUT_ANIME_ERROR, EDITING_CHANGE, DELETE_ANIME_SUCCESS, DELETE_ANIME_ERROR, RESET_MESSAGES, RESET_REGISTER, LOGIN_START, REGISTER_START, RESET_USER_ANIMES} from '../actions/userActions'
 
 export const initialState = {
     user: {
@@ -65,6 +65,11 @@ export const authReducer = (state = initialState, action) => {
                 ...state,
                 isRegistered: false,
             }
+        case RESET_USER_ANIMES:
+            return {
+                ...state,
+                userAnimes: [],
+            }
         case REGISTER_START:
             return {
                 ...state,
@@ -106,7 +111,7 @@ export const authReducer = (state = initialState, action) => {
         case FETCH_USER_ANIME_SUCCESS:
             return {
                 ...state,
-                userAnimes: action.payload,
+                userAnimes: [...state.userAnimes, action.payload],
                 errors: '',
                 loading: false,
             }
@@ -123,7 +128,7 @@ export const authReducer = (state = initialState, action) => {
                 postSuccessMessage: 'Anime has been added to your list!',
                 user: {
                     ...state.user,
-                    animes: [...state.user.animes, action.payload]
+                    animes: [ action.payload, ...state.user.animes]
                 },
             }
         case POST_ANIME_ERROR:
@@ -172,7 +177,7 @@ export const authReducer = (state = initialState, action) => {
             }
         case DELETE_ANIME_SUCCESS:
             const userArray = state.user.animes.filter((anime) => anime.anime_id !== action.payload)
-            const userAnimes = state.userAnimes.filter((anime) => anime.data.mal_id !== action.payload)
+            const userAnimes = state.userAnimes.filter((anime) => anime.mal_id !== action.payload)
             return {
                 ...state,
                 user: {
