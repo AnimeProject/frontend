@@ -1,6 +1,6 @@
 ## AniMenu!
 
-Welcome to AniMenu! Thanks for stopping by. If you'd like to connect here's my [LinkedIn](https://www.linkedin.com/in/michaelquintdev/) as well as [Email](mailto:michaelquintdev@gmail.com)
+Welcome to [AniMenu](https://animenu.vercel.app/)! Thanks for stopping by. If you'd like to connect here's my [LinkedIn](https://www.linkedin.com/in/michaelquintdev/) as well as [Email](mailto:michaelquintdev@gmail.com)
 
 Known bugs / problems:
  - Frontend reaches out to backend and Kitsu API separately, causing problem with scalability and makes state management a lot more difficult. 
