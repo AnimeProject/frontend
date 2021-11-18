@@ -8,9 +8,10 @@ import 'mdb-react-ui-kit/dist/css/mdb.min.css'
 import App from './App';
 import reducers from './store/reducer/index'
 import thunk from 'redux-thunk'
+import logger from 'redux-logger';
 import reportWebVitals from './reportWebVitals';
 
-const store = createStore(reducers, applyMiddleware(thunk));
+const store = createStore(reducers, applyMiddleware(thunk, logger));
 
 ReactDOM.render(
   <Provider store = {store}>

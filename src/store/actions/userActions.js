@@ -110,12 +110,7 @@ export const fetchUserAnime = (anime_id) => (dispatch) => {
 export const addAnimeToList = (anime) => (dispatch) => {
     axiosWithAuth().post('https://animenu.herokuapp.com/api/lists', anime)
         .then(res => {
-            dispatch({type: POST_ANIME_SUCCESS, payload: {
-                anime_id: anime.anime_id,
-                completed: anime.completed,
-                list_id: res.data.list_id,
-                rating: anime.rating
-            }})
+            dispatch({type: POST_ANIME_SUCCESS})
         }).catch(error => {
             dispatch({type: POST_ANIME_ERROR, action: error.response.data.message})
         })

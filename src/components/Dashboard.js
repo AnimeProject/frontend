@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import {fetchUserFriends, resetUserAnimes} from '../store/actions/userActions'
+import {fetchUserFriends, resetUserAnimes, getUserData} from '../store/actions/userActions'
 import ListEntry from './ListEntry'
 import { Link } from 'react-router-dom';
 
 function Dashboard(props) {
     useEffect(() => {
         props.resetUserAnimes();
+        props.getUserData(props.id)
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -18,9 +19,12 @@ function Dashboard(props) {
         <div className='m-3 text-center'>
             <h1>{props.user.username}'s List</h1>
             
-            {props.user.animes.map((user, idx) => {
-                return <ListEntry key={user.anime_id} idx={idx}/>
-            })}
+            {props.userFetched ? 
+                props.user.animes.map((user, idx) => {
+                    return <ListEntry key={user.anime_id} idx={idx}/>
+                })
+                : <h2>Grabbing User Data</h2>
+            }
             {props.user.animes.length === 0 && <h3>Welcome to AniMenu, since you're new you can add animes to your list from the <Link to = '/'>homepage</Link></h3>}
         </div>
     )
@@ -33,7 +37,8 @@ const mapStateToProps = state => {
         userAnimes: state.authReducer.userAnimes,
         loading: state.authReducer.loading,
         errors: state.authReducer.errors,
+        userFetched: state.authReducer.userFetched,
     }
 }
 
-export default connect(mapStateToProps, { fetchUserFriends, resetUserAnimes})(Dashboard)
+export default connect(mapStateToProps, { fetchUserFriends, resetUserAnimes, getUserData})(Dashboard)
