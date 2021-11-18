@@ -54,6 +54,7 @@ function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAn
             idx: idx,
         }
         updateAnime(user.animes[idx].list_id, newAnime);
+        edit()
     }
 
     const edit = () => {
