@@ -1,11 +1,12 @@
 import {connect} from 'react-redux';
 import {useState, useEffect} from 'react';
-import {updateAnime, editing, deleteAnime, fetchUserAnime} from '../store/actions/userActions'
+import {updateAnime, deleteAnime, fetchUserAnime} from '../store/actions/userActions'
 import { MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBCol, MDBCardTitle, MDBBtn, MDBIcon, MDBSpinner} from 'mdb-react-ui-kit';
 import schema from '../validation/postUpdateSchema'
 import {reach} from 'yup'
 
-function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, deleteAnime, fetchUserAnime}) {
+function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAnime}) {
+    // Form Values 
     const initialState = {
         user_id: 0,
         anime_id: 0,
@@ -15,6 +16,8 @@ function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, dele
     const [formValues, setFormValues] = useState(initialState)
     const [formErrors, setFormErrors] = useState('')
     const [disabled, setDisabled] = useState(true)
+    const [editing, setEditing] = useState(false)
+
 
     useEffect(() => {
         fetchUserAnime(user.animes[idx].anime_id)
@@ -54,7 +57,8 @@ function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, dele
     }
 
     const edit = () => {
-        editing(!isEditing);
+        const value = !editing
+        setEditing(value)
     }
     const del = () => {
         deleteAnime(user.animes[idx].list_id, user.animes[idx].anime_id)
@@ -82,7 +86,7 @@ function ListEntry({userAnimes, idx, user, isEditing, editing, updateAnime, dele
                         <MDBCardText>
                             {userAnimes[idx].synopsis}
                         </MDBCardText>
-                        {isEditing 
+                        {editing 
                             ? <form> 
                                 <label>Completed:</label>
                                 <select name='completed' onChange={onChange} value={formValues.completed}>
@@ -139,8 +143,7 @@ const mapStateToProps = (state) => {
         userAnimes: state.authReducer.userAnimes,
         user: state.authReducer.user,
         loading: state.authReducer.loading,
-        isEditing: state.authReducer.isEditing,
     }
 }
 
-export default connect(mapStateToProps, {fetchUserAnime, updateAnime, editing, deleteAnime})(ListEntry)
+export default connect(mapStateToProps, {fetchUserAnime, updateAnime, deleteAnime})(ListEntry)
