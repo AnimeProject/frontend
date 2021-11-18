@@ -11,3 +11,4 @@ Known bugs / problems:
 Fixed:
  - Rate limiting problem from Kitsu API causes dashboard to not load upon login depending on how many animes you have on your list
  - Update form doesn't have validation 
+ - When selecting the edit button on a card, all cards would enable editing and editing a different card after that point wouldn't work.
