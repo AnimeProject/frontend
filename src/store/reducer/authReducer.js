@@ -121,6 +121,13 @@ export const authReducer = (state = initialState, action) => {
                 postErrors: '',
                 postSuccessMessage: 'Anime has been added to your list!',
                 userFetched: false,
+                user: {
+                    user_id: state.user.user_id,
+                    username: '',
+                    animes: [],
+                    friends: [],
+                },
+                userAnimes: [],
             }
         case POST_ANIME_ERROR:
             return {

@@ -15,13 +15,6 @@ function Login(props) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     },[])
 
-    // useEffect(() => {
-    //     if(props.isLoggedIn){
-    //         props.getUserData(props.id)
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // },[props.isLoggedIn])
-
     useEffect(() => {
         if(props.isLoggedIn){
             push('/dashboard')

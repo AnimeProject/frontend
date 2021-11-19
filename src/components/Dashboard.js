@@ -5,9 +5,12 @@ import ListEntry from './ListEntry'
 import { Link } from 'react-router-dom';
 
 function Dashboard(props) {
+    
     useEffect(() => {
-        props.resetUserAnimes();
-        props.getUserData(props.id)
+        if(!props.userFetched){
+            props.resetUserAnimes();
+            props.getUserData(props.id)
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
@@ -21,7 +24,7 @@ function Dashboard(props) {
             
             {props.userFetched ? 
                 props.user.animes.map((user, idx) => {
-                    return <ListEntry key={user.anime_id} idx={idx}/>
+                    return <ListEntry key={user.anime_id} user = {user} idx={idx}/>
                 })
                 : <h2>Grabbing User Data</h2>
             }
