@@ -3,7 +3,7 @@
 Welcome to [AniMenu](https://animenu.vercel.app/)! Thanks for stopping by. If you'd like to connect here's my [LinkedIn](https://www.linkedin.com/in/michaelquintdev/) as well as [Email](mailto:michaelquintdev@gmail.com)
 
 Known bugs / problems:
- - Post adds to state in an unpredictable way, making the dashboard bugged.
+ - ListEntry component is unnecessarily complex and causes bugs to state involving posts, deletes, and updates.
  - After getting an error trying to add an anime to your list, delete and update can sometimes not work with correct anime.
  - Frontend reaches out to backend and Kitsu API separately, causing problem with scalability and makes state management a lot more difficult. 
  - Friend functionality is setup on backend but not on the frontend
