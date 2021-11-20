@@ -17,7 +17,7 @@ function ListEntry({idx, user}) {
     const [data, setData] = useState([])
     const [userData, setUserData] = useState(user)
     const [loading, setLoading] = useState(true)
-    const [updateSuccess, setUpdateSuccess] = useState('')
+    const [display, setDisplay] = useState(true)
     const [error, setError] = useState([])
     const [disabled, setDisabled] = useState(true)
 
@@ -60,7 +60,12 @@ function ListEntry({idx, user}) {
         setEditing(value)
     }
     const del = () => {
-            
+        axiosWithAuth().delete(`https://animenu.herokuapp.com/api/lists/${user.list_id}`)
+            .then(res => {
+                setDisplay(false)
+            }).catch(error => {
+                setError('Wrong.')
+            })
     }
 
     // Form Fun
@@ -83,9 +88,9 @@ function ListEntry({idx, user}) {
     }
 
 
-
     return(
-        <div className='p-3 d-flex justify-content-center'>
+        <>
+            {display ? <div className='p-3 d-flex justify-content-center'>
             {loading ? 
                 <div className='text-center'>
                     <MDBSpinner role='status'>
@@ -154,7 +159,8 @@ function ListEntry({idx, user}) {
                     </MDBCol>
                 </MDBRow>
             </MDBCard>}
-        </div>
+        </div> : <></>}
+        </>
     )
 }
 export default ListEntry
