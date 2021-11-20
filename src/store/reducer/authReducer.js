@@ -1,4 +1,5 @@
 import {LOGIN_SUCCESS, LOGIN_ERROR, LOG_OUT_SUCCESS, REGISTER_ERROR, REGISTER_SUCCESS, GETTING_USER_SUCCESS, GETTING_USER_FAILED, FETCH_USER_ANIME_START, FETCH_USER_ANIME_SUCCESS, FETCH_USER_ANIME_ERROR, POST_ANIME_SUCCESS, POST_ANIME_ERROR, GETTING_USER_FRIENDS_START, GETTING_USER_FRIENDS_SUCCESS, GETTING_USER_FRIENDS_FAILED, PUT_ANIME_SUCCESS, PUT_ANIME_ERROR, DELETE_ANIME_SUCCESS, DELETE_ANIME_ERROR, RESET_MESSAGES, RESET_REGISTER, LOGIN_START, REGISTER_START, RESET_USER_ANIMES} from '../actions/userActions'
+import {FETCH_DATA_START} from '../actions/dataAction'
 
 export const initialState = {
     user: {
@@ -189,6 +190,11 @@ export const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 deleteErrors: action.action
+            }
+        case FETCH_DATA_START:
+            return {
+                ...state,
+                userFetched: false,
             }
         default:
             return state;

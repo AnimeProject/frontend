@@ -3,6 +3,7 @@ import { MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBCol, MDBCar
 import schema from '../validation/postUpdateSchema'
 import {reach} from 'yup'
 import axios from 'axios';
+import axiosWithAuth from '../utils/axiosWithAuth'
 
 function ListEntry({idx, user}) {
     const initialState = {
@@ -14,9 +15,12 @@ function ListEntry({idx, user}) {
     const [formValues, setFormValues] = useState(initialState)
     const [formErrors, setFormErrors] = useState('')
     const [data, setData] = useState([])
+    const [userData, setUserData] = useState(user)
     const [loading, setLoading] = useState(true)
+    const [updateSuccess, setUpdateSuccess] = useState('')
     const [error, setError] = useState([])
     const [disabled, setDisabled] = useState(true)
+
     const [editing, setEditing] = useState(false)
 
     useEffect(() => {
@@ -31,26 +35,33 @@ function ListEntry({idx, user}) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-        // // Onclicks for buttons
-        // const update = (event) => {
-        //     event.preventDefault()
-        //     const newAnime = {
-        //         user_id: user.user_id,
-        //         anime_id: user.animes[idx].anime_id,
-        //         completed: parseInt(formValues.completed),
-        //         rating: parseInt(formValues.rating),
-        //         idx: idx,
-        //     }
-        //     edit()
-        // }
+    // Onclicks for buttons
+    const update = (event) => {
+        event.preventDefault()
+        const newAnime = {
+            user_id: user.user_id,
+            anime_id: user.anime_id,
+            completed: parseInt(formValues.completed),
+            rating: parseInt(formValues.rating),
+            list_id: user.list_id,
+        }
+        const {list_id, ...rest} = newAnime
+        axiosWithAuth().put(`https://animenu.herokuapp.com/api/lists/${list_id}`, rest)
+            .then(res => {
+                setUserData(newAnime)
+            }).catch(error => {
+                setError('Wrong.')
+            })
+        edit()
+    }
     
-        // const edit = () => {
-        //     const value = !editing
-        //     setEditing(value)
-        // }
-        // const del = () => {
+    const edit = () => {
+        const value = !editing
+        setEditing(value)
+    }
+    const del = () => {
             
-        // }
+    }
 
     // Form Fun
     useEffect(() => {
@@ -104,39 +115,39 @@ function ListEntry({idx, user}) {
                                 </select>
                                 <label>Rating:</label>
                                 <input 
-                                    placeholder={user.rating}
+                                    placeholder={userData.rating}
                                     name='rating' 
                                     onChange={onChange} 
                                     value={formValues.rating}
                                 />
-                                {/* <MDBBtn disabled={disabled} className='mx-3' onClick={update}>
+                                <MDBBtn disabled={disabled} className='mx-3' onClick={update}>
                                     Update
-                                </MDBBtn> */}
-                                {/* <MDBIcon 
+                                </MDBBtn>
+                                <MDBIcon 
                                     fas icon="undo" 
                                     onClick={edit} 
                                     style={{cursor: 'pointer'}}
-                                /> */}
+                                />
                                 <p className='text-danger'>{formErrors.rating}</p>
                             </form>
                             : <div className='d-inline-flex'>
-                                <h4 className='mx-2'>Completed: {user.completed === 1 ? <>Yes</> : <>No</>}</h4>
-                                <h4 className='mx-2'>Rating: {user.rating}</h4>
-                                {/* <MDBIcon 
+                                <h4 className='mx-2'>Completed: {userData.completed === 1 ? <>Yes</> : <>No</>}</h4>
+                                <h4 className='mx-2'>Rating: {userData.rating}</h4>
+                                <MDBIcon 
                                     className='m-1'
                                     far icon="edit" 
                                     onClick = {edit} 
                                     size='lg'
                                     color='primary'
                                     style={{cursor: 'pointer'}}
-                                /> */}
-                                {/* <MDBIcon 
+                                />
+                                <MDBIcon 
                                     className='m-1'
                                     far icon="trash-alt" 
                                     onClick = {del} 
                                     size='lg'
                                     style={{cursor: 'pointer'}}
-                                /> */}
+                                />
                             </div>
                             }
                         </MDBCardBody>
