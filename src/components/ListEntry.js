@@ -5,7 +5,7 @@ import {reach} from 'yup'
 import axios from 'axios';
 import axiosWithAuth from '../utils/axiosWithAuth'
 
-function ListEntry({user}) {
+function ListEntry({user, idx}) {
     const initialState = {
         user_id: 0,
         anime_id: 0,
@@ -29,12 +29,12 @@ function ListEntry({user}) {
             setLoading(false)
         })
         .catch(err => {
-            setError('Wrong.')
+            setError('Could not fetch anime')
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    // CRUD
+    // Update and Delete
     const update = (event) => {
         event.preventDefault()
         const newAnime = {

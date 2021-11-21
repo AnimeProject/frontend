@@ -16,7 +16,7 @@ function Register(props) {
 
     useEffect(() => {
         schema.isValid(input).then(valid => setDisabled(!valid))
-      }, [input])
+    }, [input])
 
     useEffect(() => {
         if(props.isRegistered){

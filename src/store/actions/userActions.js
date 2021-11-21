@@ -11,23 +11,14 @@ export const REGISTER_START = "REGISTER_START";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_ERROR = "REGISTER_ERROR";
 export const RESET_REGISTER = "RESET_REGISTER";
-export const RESET_USER_ANIMES = "RESET_USER_ANIMES";
 
 export const GETTING_USER_START = "GETTING_USER_START";
 export const GETTING_USER_SUCCESS = "GETTING_USER_SUCCESS";
 export const GETTING_USER_FAILED = "GETTING_USER_FAILED";
 
-export const FETCH_USER_ANIME_START = "FETCH_USER_ANIME_START";
-export const FETCH_USER_ANIME_SUCCESS = "FETCH_USER_ANIME_SUCCESS";
-export const FETCH_USER_ANIME_ERROR = "FETCH_USER_ANIME_ERROR";
-
 export const POST_ANIME_START = 'POST_ANIME_START';
 export const POST_ANIME_SUCCESS = 'POST_ANIME_SUCCESS';
 export const POST_ANIME_ERROR = 'POST_ANIME_ERROR';
-
-export const GETTING_USER_FRIENDS_START = "GETTING_USER_FRIENDS_START";
-export const GETTING_USER_FRIENDS_SUCCESS = "GETTING_USER_FRIENDS_SUCCESS";
-export const GETTING_USER_FRIENDS_FAILED = "GETTING_USER_FRIENDS_FAILED";
 
 export const handleLogin = (user) => (dispatch) => {
     dispatch({type: LOGIN_START})
@@ -50,9 +41,6 @@ export const resetMessages = () => {
 export const resetRegister = () => {
     return {type: RESET_REGISTER}
 }
-export const resetUserAnimes = () => {
-    return {type: RESET_USER_ANIMES}
-}
 
 export const handleRegister = (user) => (dispatch) => {
     dispatch({type: REGISTER_START})
@@ -74,28 +62,6 @@ export const getUserData = (id) => (dispatch) => {
         })
         .catch(err => {
             dispatch({type: GETTING_USER_FAILED, payload: err.response.data.message})
-        })
-}
-
-export const fetchUserFriends = (id) => (dispatch) => {
-    dispatch({type: GETTING_USER_FRIENDS_START})
-    axiosWithAuth().get(`https://animenu.herokuapp.com/api/friends/${id}`)
-        .then(res => {
-            dispatch({type: GETTING_USER_FRIENDS_SUCCESS, payload: res.data})
-        })
-        .catch(err => {
-            dispatch({type: GETTING_USER_FRIENDS_FAILED, payload: err})
-        })
-}
-
-export const fetchUserAnime = (anime_id) => (dispatch) => {
-    dispatch({type: FETCH_USER_ANIME_START})
-    axios.get(`https://api.jikan.moe/v3/anime/${anime_id}`)
-        .then(res => {
-            dispatch({type: FETCH_USER_ANIME_SUCCESS, payload: res.data})
-        })
-        .catch(err => {
-            dispatch({type: FETCH_USER_ANIME_ERROR, payload: err})
         })
 }
 
