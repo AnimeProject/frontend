@@ -17,17 +17,10 @@ function Login(props) {
 
     useEffect(() => {
         if(props.isLoggedIn){
-            props.getUserData(props.id)
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[props.isLoggedIn])
-
-    useEffect(() => {
-        if(props.userFetched){
             push('/dashboard')
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.userFetched])
+    }, [props.isLoggedIn])
     
     // Form fun
     const submitHandler = (event) => {

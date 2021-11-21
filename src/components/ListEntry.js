@@ -1,35 +1,79 @@
-import {connect} from 'react-redux';
 import {useState, useEffect} from 'react';
-import {updateAnime, deleteAnime, fetchUserAnime} from '../store/actions/userActions'
 import { MDBCard, MDBCardText, MDBCardBody, MDBCardImage, MDBRow, MDBCol, MDBCardTitle, MDBBtn, MDBIcon, MDBSpinner} from 'mdb-react-ui-kit';
 import schema from '../validation/postUpdateSchema'
 import {reach} from 'yup'
+import axios from 'axios';
+import axiosWithAuth from '../utils/axiosWithAuth'
 
-function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAnime}) {
-    // Form Values 
+function ListEntry({idx, user}) {
     const initialState = {
         user_id: 0,
         anime_id: 0,
         completed: 0,
-        rating: user.animes[idx].rating,
+        rating: user.rating,
     }
     const [formValues, setFormValues] = useState(initialState)
     const [formErrors, setFormErrors] = useState('')
+    const [data, setData] = useState([])
+    const [userData, setUserData] = useState(user)
+    const [loading, setLoading] = useState(true)
+    const [display, setDisplay] = useState(true)
+    const [error, setError] = useState('')
     const [disabled, setDisabled] = useState(true)
+
     const [editing, setEditing] = useState(false)
 
-
     useEffect(() => {
-        fetchUserAnime(user.animes[idx].anime_id)
+        axios.get(`https://api.jikan.moe/v3/anime/${user.anime_id}`)
+        .then(res => {
+            setData(res.data)
+            setLoading(false)
+        })
+        .catch(err => {
+            setError('Wrong.')
+        })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    // Onclicks for buttons
+    const update = (event) => {
+        event.preventDefault()
+        const newAnime = {
+            user_id: user.user_id,
+            anime_id: user.anime_id,
+            completed: parseInt(formValues.completed),
+            rating: parseInt(formValues.rating),
+            list_id: user.list_id,
+        }
+        const {list_id, ...rest} = newAnime
+        axiosWithAuth().put(`https://animenu.herokuapp.com/api/lists/${list_id}`, rest)
+            .then(res => {
+                setUserData(newAnime)
+            }).catch(error => {
+                setError('Wrong.')
+            })
+        edit()
+    }
+    
+    const edit = () => {
+        const value = !editing
+        setEditing(value)
+    }
+    const del = () => {
+        axiosWithAuth().delete(`https://animenu.herokuapp.com/api/lists/${user.list_id}`)
+            .then(res => {
+                setDisplay(false)
+            }).catch(error => {
+                setError('Wrong.')
+            })
+    }
+
+    // Form Fun
     useEffect(() => {
         schema.isValid(formValues).then(valid => setDisabled(!valid))
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, [formValues])
 
-    // Form fun
     const onChange = (event) => {
         const {name, value} = event.target;
         validate(name, value)
@@ -43,31 +87,10 @@ function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAn
             .catch(err => setFormErrors({...formErrors, [name]: err.errors[0]}))
     }
 
-    // Onclicks for buttons
-    const update = (event) => {
-        event.preventDefault()
-        const newAnime = {
-            user_id: user.user_id,
-            anime_id: user.animes[idx].anime_id,
-            completed: parseInt(formValues.completed),
-            rating: parseInt(formValues.rating),
-            idx: idx,
-        }
-        updateAnime(user.animes[idx].list_id, newAnime);
-        edit()
-    }
-
-    const edit = () => {
-        const value = !editing
-        setEditing(value)
-    }
-    const del = () => {
-        deleteAnime(user.animes[idx].list_id, user.animes[idx].anime_id)
-    }
-
     return(
-        <div className='p-3 d-flex justify-content-center'>
-            {userAnimes.length !== user.animes.length ? 
+        <>
+        {display ? <div className='p-3 d-flex justify-content-center'>
+            {loading ? 
                 <div className='text-center'>
                     <MDBSpinner role='status'>
                         <span className='visually-hidden'>Fetching Anime...</span>
@@ -77,15 +100,15 @@ function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAn
                 <MDBCard className='border' style={{ maxWidth: '80%' }} alignment='center'>
                 <MDBRow className='g0'>
                     <MDBCol md='2'>
-                        <MDBCardImage src={userAnimes[idx].image_url} alt='...' fluid />
+                        <MDBCardImage src={data.image_url} alt='...' fluid />
                     </MDBCol>
                     <MDBCol md='10'>
                     <MDBCardBody>
                         <MDBCardTitle>
-                            {userAnimes[idx].title}
+                            {data.title}
                         </MDBCardTitle>
                         <MDBCardText>
-                            {userAnimes[idx].synopsis}
+                            {data.synopsis}
                         </MDBCardText>
                         {editing 
                             ? <form> 
@@ -96,7 +119,7 @@ function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAn
                                 </select>
                                 <label>Rating:</label>
                                 <input 
-                                    placeholder={user.animes[idx].rating}
+                                    placeholder={userData.rating}
                                     name='rating' 
                                     onChange={onChange} 
                                     value={formValues.rating}
@@ -112,8 +135,8 @@ function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAn
                                 <p className='text-danger'>{formErrors.rating}</p>
                             </form>
                             : <div className='d-inline-flex'>
-                                <h4 className='mx-2'>Completed: {user.animes[idx].completed === 1 ? <>Yes</> : <>No</>}</h4>
-                                <h4 className='mx-2'>Rating: {user.animes[idx].rating}</h4>
+                                <h4 className='mx-2'>Completed: {userData.completed === 1 ? <>Yes</> : <>No</>}</h4>
+                                <h4 className='mx-2'>Rating: {userData.rating}</h4>
                                 <MDBIcon 
                                     className='m-1'
                                     far icon="edit" 
@@ -129,22 +152,15 @@ function ListEntry({userAnimes, idx, user, updateAnime, deleteAnime, fetchUserAn
                                     size='lg'
                                     style={{cursor: 'pointer'}}
                                 />
+                                {error.length !== 0 ? <h4 className='text-danger'>{error}</h4> : null}
                             </div>
                             }
                         </MDBCardBody>
                     </MDBCol>
                 </MDBRow>
             </MDBCard>}
-        </div>
+        </div> : <></>}
+        </>
     )
 }
-
-const mapStateToProps = (state) => {
-    return {
-        userAnimes: state.authReducer.userAnimes,
-        user: state.authReducer.user,
-        loading: state.authReducer.loading,
-    }
-}
-
-export default connect(mapStateToProps, {fetchUserAnime, updateAnime, deleteAnime})(ListEntry)
+export default ListEntry
