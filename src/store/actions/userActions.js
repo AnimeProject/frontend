@@ -25,17 +25,9 @@ export const POST_ANIME_START = 'POST_ANIME_START';
 export const POST_ANIME_SUCCESS = 'POST_ANIME_SUCCESS';
 export const POST_ANIME_ERROR = 'POST_ANIME_ERROR';
 
-export const PUT_ANIME_START = 'PUT_ANIME_START';
-export const PUT_ANIME_SUCCESS = 'PUT_ANIME_SUCCESS';
-export const PUT_ANIME_ERROR = 'PUT_ANIME_ERROR';
-
 export const GETTING_USER_FRIENDS_START = "GETTING_USER_FRIENDS_START";
 export const GETTING_USER_FRIENDS_SUCCESS = "GETTING_USER_FRIENDS_SUCCESS";
 export const GETTING_USER_FRIENDS_FAILED = "GETTING_USER_FRIENDS_FAILED";
-
-export const DELETE_ANIME_START = "DELETE_ANIME_START";
-export const DELETE_ANIME_SUCCESS = "DELETE_ANIME_SUCCESS";
-export const DELETE_ANIME_ERROR = "DELETE_ANIME_ERROR";
 
 export const handleLogin = (user) => (dispatch) => {
     dispatch({type: LOGIN_START})
@@ -113,26 +105,5 @@ export const addAnimeToList = (anime) => (dispatch) => {
             dispatch({type: POST_ANIME_SUCCESS})
         }).catch(error => {
             dispatch({type: POST_ANIME_ERROR, action: error.response.data.message})
-        })
-}
-
-export const updateAnime = (id, anime) => (dispatch) => {
-    const {idx, ...rest} = anime;
-    dispatch({ type: PUT_ANIME_START })
-    axiosWithAuth().put(`https://animenu.herokuapp.com/api/lists/${id}`, rest)
-        .then(res => {
-            dispatch({type: PUT_ANIME_SUCCESS, payload: {list_id: res.data[0].list_id, rest, idx}})
-        }).catch(error => {
-            dispatch({type: PUT_ANIME_ERROR, action: error.response.data.message})
-        })
-}
-
-export const deleteAnime = (id, anime_id) => (dispatch) => {
-    dispatch({ type: DELETE_ANIME_START })
-    axiosWithAuth().delete(`https://animenu.herokuapp.com/api/lists/${id}`)
-        .then(res => {
-            dispatch({type: DELETE_ANIME_SUCCESS, payload: anime_id})
-        }).catch(error => {
-            dispatch({type: DELETE_ANIME_ERROR, action: error.message})
         })
 }

@@ -5,7 +5,6 @@ import ListEntry from './ListEntry'
 import { Link } from 'react-router-dom';
 
 function Dashboard(props) {
-    
     useEffect(() => {
         if(!props.userFetched){
             props.resetUserAnimes();
@@ -24,7 +23,7 @@ function Dashboard(props) {
             
             {props.userFetched ? 
                 props.user.animes.map((user, idx) => {
-                    return <ListEntry key={user.anime_id} user = {user} idx={idx}/>
+                    return <ListEntry key={user.anime_id} user = {user}/>
                 })
                 : <h2>Grabbing User Data</h2>
             }
