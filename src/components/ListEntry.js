@@ -18,7 +18,7 @@ function ListEntry({idx, user}) {
     const [userData, setUserData] = useState(user)
     const [loading, setLoading] = useState(true)
     const [display, setDisplay] = useState(true)
-    const [error, setError] = useState([])
+    const [error, setError] = useState('')
     const [disabled, setDisabled] = useState(true)
 
     const [editing, setEditing] = useState(false)
@@ -30,7 +30,7 @@ function ListEntry({idx, user}) {
             setLoading(false)
         })
         .catch(err => {
-            setError(err)
+            setError('Wrong.')
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -87,10 +87,9 @@ function ListEntry({idx, user}) {
             .catch(err => setFormErrors({...formErrors, [name]: err.errors[0]}))
     }
 
-
     return(
         <>
-            {display ? <div className='p-3 d-flex justify-content-center'>
+        {display ? <div className='p-3 d-flex justify-content-center'>
             {loading ? 
                 <div className='text-center'>
                     <MDBSpinner role='status'>
@@ -153,6 +152,7 @@ function ListEntry({idx, user}) {
                                     size='lg'
                                     style={{cursor: 'pointer'}}
                                 />
+                                {error.length !== 0 ? <h4 className='text-danger'>{error}</h4> : null}
                             </div>
                             }
                         </MDBCardBody>
