@@ -5,7 +5,7 @@ import {reach} from 'yup'
 import axios from 'axios';
 import axiosWithAuth from '../utils/axiosWithAuth'
 
-function ListEntry({idx, user}) {
+function ListEntry({user}) {
     const initialState = {
         user_id: 0,
         anime_id: 0,
@@ -20,7 +20,6 @@ function ListEntry({idx, user}) {
     const [display, setDisplay] = useState(true)
     const [error, setError] = useState('')
     const [disabled, setDisabled] = useState(true)
-
     const [editing, setEditing] = useState(false)
 
     useEffect(() => {
@@ -35,7 +34,7 @@ function ListEntry({idx, user}) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    // Onclicks for buttons
+    // CRUD
     const update = (event) => {
         event.preventDefault()
         const newAnime = {
@@ -49,23 +48,26 @@ function ListEntry({idx, user}) {
         axiosWithAuth().put(`https://animenu.herokuapp.com/api/lists/${list_id}`, rest)
             .then(res => {
                 setUserData(newAnime)
-            }).catch(error => {
-                setError('Wrong.')
+                setError('')
+            }).catch(e => {
+                setError('Update to database failed')
             })
         edit()
     }
-    
-    const edit = () => {
-        const value = !editing
-        setEditing(value)
-    }
+
     const del = () => {
         axiosWithAuth().delete(`https://animenu.herokuapp.com/api/lists/${user.list_id}`)
             .then(res => {
                 setDisplay(false)
             }).catch(error => {
-                setError('Wrong.')
+                setError('Delete from database failed')
             })
+    }
+
+    // Enter Editing Mode
+    const edit = () => {
+        const value = !editing
+        setEditing(value)
     }
 
     // Form Fun
